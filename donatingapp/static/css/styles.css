@@ -1,0 +1,161 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #c834db;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Navbar Styles */
+nav {
+    background-color: #db34d0;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: #fff;
+    font-weight: bold;
+    padding: 8px 15px;
+    margin: 0 10px; 
+    display: inline-block;
+    border-radius: 5px;
+}
+
+nav a:hover {
+    background-color: #a129b9;
+}
+
+/* Buttons */
+button, .btn {
+    background-color: #b229b9;
+    border: none;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #b229b9;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Form Styles */
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form textarea {
+    height: 100px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #a334db;
+    color: #fff;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    color: #3498db;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background-color: #3498db;
+    color: #fff;
+}
+
+/* Alerts */
+.alert {
+    padding: 15px;
+    background-color: #f1c40f;
+    color: #333;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.alert-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+canvas {
+    max-width: 100%;
+    margin: auto;
+}

@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}</h2>
+<p>Access your resources here:</p>
+<ul>
+    <li><a href="{% url 'analytics' %}">Analytics</a></li>
+    <li><a href="{% url 'user_list' %}">Manage Users</a></li>
+</ul>
+{% endblock %}

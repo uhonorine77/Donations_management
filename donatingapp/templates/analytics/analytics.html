@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Donations Analytics</h2>
+    <hr>
+
+    <h4>Total Donations: ${{ total_donations }}</h4>
+    
+    <canvas id="methodChart" width="400" height="200"></canvas>
+
+    <canvas id="dateChart" width="400" height="200" class="mt-5"></canvas>
+</div>
+
+<script>
+    const methodLabels = JSON.parse(document.getElementById('methodLabels').textContent);
+    const methodData = JSON.parse(document.getElementById('methodData').textContent);
+    
+    const methodChart = new Chart(document.getElementById('methodChart'), {
+        type: 'bar',
+        data: {
+            labels: methodLabels.map(d => d.method),
+            datasets: [{
+                label: 'Donations by Method',
+                data: methodLabels.map(d => d.count),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    const dateLabels = JSON.parse(document.getElementById('dateLabels').textContent);
+    const dateData = JSON.parse(document.getElementById('dateData').textContent);
+    
+    const dateChart = new Chart(document.getElementById('dateChart'), {
+        type: 'line',
+        data: {
+            labels: dateLabels.map(d => d.date),
+            datasets: [{
+                label: 'Donations by Date',
+                data: dateLabels.map(d => d.total),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+            }]
+        }
+    });
+</script>
+
+<script type="application/json" id="methodLabels">{{ donations_by_method|safe|json_script }}</script>
+<script type="application/json" id="methodData">{{ donations_by_method|safe|json_script }}</script>
+<script type="application/json" id="dateLabels">{{ donations_by_date|safe|json_script }}</script>
+<script type="application/json" id="dateData">{{ donations_by_date|safe|json_script }}</script>
+
+{% endblock %}
