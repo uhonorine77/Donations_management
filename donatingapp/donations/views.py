@@ -44,15 +44,24 @@ def delete_donation(request, donation_id):
     return render(request, 'donations/delete_donation.html', {'donation': donation})
 
 def is_admin(user):
-    return user.is_staff  # or user.role == 'Admin' if you're using a custom field
+    return user.is_staff
+
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 @login_required
 def analytics_view(request):
-    
     total_donations = Donation.objects.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
-    donations_by_method = Donation.objects.values('method').annotate(count=Count('method'))
+    
+    donations_by_method = (
+        Donation.objects.values('method')  
+        .annotate(total=Sum('amount'))     
+        .order_by('-total')               
+    )
+
     donations_by_date = (
-        Donation.objects.annotate(month=TruncMonth('date'))
+        Donation.objects.filter(date__isnull=False)
+        .annotate(month=TruncMonth('date'))
         .values('month')
         .annotate(total=Sum('amount'))
         .order_by('month')
@@ -60,7 +69,9 @@ def analytics_view(request):
 
     context = {
         'total_donations': total_donations,
-        'donations_by_method': list(donations_by_method),
-        'donations_by_date': list(donations_by_date),
+        'donations_by_date': json.dumps(list(donations_by_date), cls=DjangoJSONEncoder),
+        'donations_by_method': json.dumps(list(donations_by_method), cls=DjangoJSONEncoder),
     }
+
     return render(request, 'analytics/analytics.html', context)
+

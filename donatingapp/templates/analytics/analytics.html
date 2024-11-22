@@ -1,55 +1,126 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container mt-5">
-    <h2>Donations Analytics</h2>
-    <hr>
-
-    <h4>Total Donations: ${{ total_donations }}</h4>
+<div class="container mt-4">
+    <h1>Donation Analytics</h1>
     
-    <canvas id="methodChart" width="400" height="200"></canvas>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Total Donations</h3>
+            <p class="display-4">{{ total_donations }}</p>
+        </div>
+    </div>
 
-    <canvas id="dateChart" width="400" height="200" class="mt-5"></canvas>
+    <div class="card">
+        <div class="card-body">
+            <h3>Donations Over Time</h3>
+            <canvas id="donationsChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3>Donations by Method</h3>
+            <canvas id="methodChart"></canvas>
+        </div>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const methodLabels = JSON.parse(document.getElementById('methodLabels').textContent);
-    const methodData = JSON.parse(document.getElementById('methodData').textContent);
-    
-    const methodChart = new Chart(document.getElementById('methodChart'), {
-        type: 'bar',
-        data: {
-            labels: methodLabels.map(d => d.method),
-            datasets: [{
-                label: 'Donations by Method',
-                data: methodLabels.map(d => d.count),
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const donationsByDate = JSON.parse(document.getElementById('donations-data').textContent);
+        const labels = donationsByDate.map(entry => entry.month || "Unknown");
+        const data = donationsByDate.map(entry => entry.total || 0);
 
-    const dateLabels = JSON.parse(document.getElementById('dateLabels').textContent);
-    const dateData = JSON.parse(document.getElementById('dateData').textContent);
-    
-    const dateChart = new Chart(document.getElementById('dateChart'), {
-        type: 'line',
-        data: {
-            labels: dateLabels.map(d => d.date),
-            datasets: [{
-                label: 'Donations by Date',
-                data: dateLabels.map(d => d.total),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-            }]
+        if (!Array.isArray(donationsByDate)) {
+            console.error("Invalid donations_by_date data:", donationsByDate);
+            return;
         }
+
+        const ctx = document.getElementById('donationsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Donations',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Donation Amount'
+                        }
+                    }
+                }
+            }
+        });
+        const donationsByMethod = JSON.parse(document.getElementById('method-data').textContent);
+        const methodLabels = donationsByMethod.map(entry => entry.method || "Unknown");
+        const methodData = donationsByMethod.map(entry => entry.total || 0);
+
+        const ctxMethod = document.getElementById('methodChart').getContext('2d');
+        new Chart(ctxMethod, {
+            type: 'pie',
+            data: {
+                labels: methodLabels,
+                datasets: [{
+                    label: 'Donations by Method',
+                    data: methodData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                }
+            }
+        });
     });
 </script>
 
-<script type="application/json" id="methodLabels">{{ donations_by_method|safe|json_script }}</script>
-<script type="application/json" id="methodData">{{ donations_by_method|safe|json_script }}</script>
-<script type="application/json" id="dateLabels">{{ donations_by_date|safe|json_script }}</script>
-<script type="application/json" id="dateData">{{ donations_by_date|safe|json_script }}</script>
+<script id="donations-data" type="application/json">
+    {{ donations_by_date|safe }}
+</script>
+<script id="method-data" type="application/json">
+    {{ donations_by_method|safe }}
+</script>
 
 {% endblock %}
