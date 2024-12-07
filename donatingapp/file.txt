@@ -1,0 +1,91 @@
+from users.models import User
+from django.utils.crypto import get_random_string
+
+# Generate 500,000 users
+users = []
+for i in range(500000):
+    username = f'user_{i}'
+    email = f'user_{i}@example.com'
+    role = 'donor' if i % 2 == 0 else 'admin' if i % 5 == 0 else 'user'
+    password = get_random_string(10)
+    user = User(username=username, email=email, role=role)
+    user.set_password(password)  # Set password hash
+    users.append(user)
+
+# Bulk insert users
+User.objects.bulk_create(users, batch_size=1000)
+print("Inserted 500,000 users successfully!")
+
+----------------------------------------------------------------------------------------------------------------
+
+from donations.models import Donation
+from recipients.models import RequestForDonation
+from django.utils.crypto import get_random_string
+from random import choice, randint
+from django.contrib.auth.models import User
+
+# Assuming User model already contains 500,000 users
+# Generate 500,000 donations
+donations = []
+for i in range(500000):
+    donor = User.objects.get(id=randint(1, 500000))  # Random donor from the 500,000 users
+    amount = randint(10, 100000)  # Random donation amount between 10 and 1000
+    method = choice(['cash', 'mobile', 'bank', 'card'])  # Random payment method
+    notes = get_random_string(20)  # Random notes
+    request = RequestForDonation.objects.filter(fulfilled=False).first()  # Random request (could be fulfilled or not)
+    
+    donation = Donation(
+        donor=donor,
+        amount=amount,
+        method=method,
+        notes=notes,
+        request=request
+    )
+    donations.append(donation)
+
+    # Bulk create every 1000 donations to avoid memory overload
+    if len(donations) >= 1000:
+        Donation.objects.bulk_create(donations, batch_size=1000)
+        donations = []  # Reset the donations list to avoid memory overload
+
+# Ensure to bulk create any remaining donations
+if donations:
+    Donation.objects.bulk_create(donations, batch_size=1000)
+
+print("Inserted 500,000 donations successfully!")
+
+--------------------------------------------------------------------------------------------------------------
+
+from recipients.models import RequestForDonation
+from random import choice, randint
+from users.models import User
+
+requests = []
+for i in range(500000):
+    recipient = User.objects.get(id=randint(1, 500000))  # Random recipient from the 500,000 users
+    user_type = choice(['individual', 'organization', 'company'])  # Random user type
+    title = f"Request {i} for Donation"  # Simple title based on the iteration
+    description = f"Description for request {i}"  # Simple description based on the iteration
+    amount_needed = randint(100, 5000)  # Random amount needed between 100 and 5000
+
+    request = RequestForDonation(
+        recipient=recipient,
+        user_type=user_type,
+        title=title,
+        description=description,
+        amount_needed=amount_needed
+    )
+    requests.append(request)
+
+    # Bulk create every 1000 requests to avoid memory overload
+    if len(requests) >= 1000:
+        RequestForDonation.objects.bulk_create(requests, batch_size=1000)
+        requests = []  # Reset the requests list to avoid memory overload
+
+# Ensure to bulk create any remaining requests
+if requests:
+    RequestForDonation.objects.bulk_create(requests, batch_size=1000)
+
+print("Inserted 500,000 requests for donation successfully!")
+
+

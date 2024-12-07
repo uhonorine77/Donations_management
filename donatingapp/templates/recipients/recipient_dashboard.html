@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Your Donation Requests</h2>
+  <a href="{% url 'add_request' %}" class="btn btn-primary mb-4">Create New Request</a>
+  
+  {% if requests %}
+    <div class="row">
+      {% for request in requests %}
+        <div class="col-md-6 mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ request.title }}</h5>
+              <p class="card-text">{{ request.description }}</p>
+              <p><strong>Amount Needed:</strong> {{ request.amount_needed }}</p>
+              <p>
+                <strong>Status:</strong> 
+                {% if request.fulfilled %}
+                  Fulfilled
+                {% elif request.rejected %}
+                  Rejected - Reason: {{ request.rejection_reason }}
+                {% else %}
+                  Pending
+                {% endif %}
+              </p>
+              <p><strong>Total Donated:</strong> {{ request.total_donated }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <p>You haven't made any donation requests yet!</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

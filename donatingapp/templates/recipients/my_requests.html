@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Donation Requests</h2>
+<ul>
+    {% for request in requests %}
+        <li>{{ request.title }} - {{ request.user_type }} - {{ request.amount_needed }} - {% if request.fulfilled %} Fulfilled {% else %} Not Fulfilled {% endif %}</li>
+    {% empty %}
+        <p>You have not made any donation requests yet.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

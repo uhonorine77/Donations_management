@@ -1,14 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404 # type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
+from django.db.models import Sum # type: ignore
+from django.db.models.functions import TruncMonth # type: ignore
 from .models import Donation
 from .forms import DonationForm
-from django.db.models import Sum, Count # type: ignore
-from django.db.models.functions import TruncMonth # type: ignore
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from django.http import JsonResponse # type: ignore
 
 @login_required
 def donation_list(request):
     donations = Donation.objects.filter(donor=request.user)
     return render(request, 'donations/donation_list.html', {'donations': donations})
+
+    # donation_data = [{'id': donation.id, 'amount': str(donation.amount), 'method': donation.get_method_display(), 'date': donation.date, 'notes': donation.notes} for donation in donations]
+    # return JsonResponse({'donations': donation_data})
 
 @login_required
 def add_donation(request):
@@ -46,9 +52,6 @@ def delete_donation(request, donation_id):
 def is_admin(user):
     return user.is_staff
 
-from django.core.serializers.json import DjangoJSONEncoder
-import json
-
 @login_required
 def analytics_view(request):
     total_donations = Donation.objects.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
@@ -74,4 +77,5 @@ def analytics_view(request):
     }
 
     return render(request, 'analytics/analytics.html', context)
+
 

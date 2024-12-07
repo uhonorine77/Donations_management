@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Reject Donation Request</h2>
+  <p><strong>Title:</strong> {{ donation_request.title }}</p>
+  <p><strong>Description:</strong> {{ donation_request.description }}</p>
+  <p><strong>Amount Needed:</strong> {{ donation_request.amount_needed }}</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_rejection_reason">Reason for Rejection:</label>
+      {{ form.rejection_reason }}
+    </div>
+    <button type="submit" class="btn btn-danger mt-3">Submit Rejection</button>
+  </form>
+</div>
+{% endblock %}

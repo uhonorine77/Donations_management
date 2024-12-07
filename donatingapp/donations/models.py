@@ -11,6 +11,7 @@ class Donation(models.Model):
     ]
     
     donor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donations')
+    request = models.ForeignKey('recipients.RequestForDonation', on_delete=models.CASCADE, related_name='donations', null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
     method = models.CharField(max_length=20, choices=PAYMENT_METHODS)

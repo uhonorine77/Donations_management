@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Make a Decision</h2>
+<h3>{{ request.title }}</h3>
+<p>{{ request.description }}</p>
+<p>Amount Needed: {{ request.amount_needed }}</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Decision</button>
+</form>
+{% endblock %}
